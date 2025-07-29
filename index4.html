@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>แสดงค่าแสงแบบเรียลไทม์</title>
+  <style>
+    body {
+      font-family: 'Prompt', sans-serif;
+      background: #fffbea;
+      text-align: center;
+      padding: 50px;
+      color: #444;
+    }
+    h1 {
+      color: #f39c12;
+    }
+    #lightValue {
+      font-size: 48px;
+      font-weight: bold;
+      margin-top: 30px;
+      color: #f39c12;
+    }
+    #lightIcon {
+      margin-top: 20px;
+      width: 100px;
+      height: 100px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>ค่าความสว่าง (แสง)</h1>
+  <div id="lightValue">-- lx</div>
+  <img id="lightIcon" src="" alt="Light Icon" />
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-firestore-compat.js"></script>
+
+  <script>
+    // กำหนดค่า Firebase config
+    const firebaseConfig = {
+  apiKey: "AIzaSyDhKddDAIVNgsGnDDyY0YbNlJzkyAtPSE4",
+  authDomain: "myiot2-ea76e.firebaseapp.com",
+  projectId: "myiot2-ea76e",
+  storageBucket: "myiot2-ea76e.firebasestorage.app",
+  messagingSenderId: "207422089675",
+  appId: "1:207422089675:web:988416a0e38d8b05be6e4e",
+  measurementId: "G-0ZPJMR7FMM"
+};
+
+
+    // เริ่ม Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const docRef = db.collection("devices4").doc("light4");
+    const lightValueEl = document.getElementById("lightValue");
+    const lightIcon = document.getElementById("lightIcon");
+
+    // ฟังข้อมูล realtime
+    docRef.onSnapshot((doc) => {
+      const data = doc.data();
+      if(data && typeof data.light === 'number') {
+        const light = data.light.toFixed(0);
+        lightValueEl.textContent = `${light} lx`;
+
+        // แสดงไอคอนตามระดับแสง
+        if(light < 100) {
+          lightIcon.src = "https://cdn-icons-png.flaticon.com/512/169/169367.png"; // แสงน้อย
+        } else if(light < 500) {
+          lightIcon.src = "https://cdn-icons-png.flaticon.com/512/1164/1164954.png"; // แสงปานกลาง
+        } else {
+          lightIcon.src = "https://cdn-icons-png.flaticon.com/512/869/869869.png"; // แสงจ้า
+        }
+      } else {
+        lightValueEl.textContent = "ไม่พบข้อมูล";
+        lightIcon.src = "";
+      }
+    });
+  </script>
+
+</body>
+</html>
